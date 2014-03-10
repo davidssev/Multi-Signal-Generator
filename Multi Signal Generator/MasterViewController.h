@@ -32,6 +32,8 @@
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
+@property (nonatomic, retain) NSMutableArray *cellArray;
+
 -(IBAction)TestSlider:(id)sender;
 
 @end

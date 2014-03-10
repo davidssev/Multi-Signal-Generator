@@ -26,6 +26,7 @@
 		503E625F180CC80E00C281E2 /* SignalCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 503E625E180CC80E00C281E2 /* SignalCell.m */; };
 		503E6261180CDE9F00C281E2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 503E6260180CDE9F00C281E2 /* AVFoundation.framework */; };
 		509ADA9918819CC200A1BCFF /* EventAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 509ADA9818819CC200A1BCFF /* EventAudioPlayer.m */; };
+		509C486C18C4185100DC3414 /* Signal.m in Sources */ = {isa = PBXBuildFile; fileRef = 509C486B18C4185100DC3414 /* Signal.m */; };
 		50E089531825721B00DB2912 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E089521825721B00DB2912 /* Event.m */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,8 @@
 		503E6260180CDE9F00C281E2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		509ADA9718819CC200A1BCFF /* EventAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAudioPlayer.h; sourceTree = "<group>"; };
 		509ADA9818819CC200A1BCFF /* EventAudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventAudioPlayer.m; sourceTree = "<group>"; };
+		509C486A18C4185100DC3414 /* Signal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal.h; sourceTree = "<group>"; };
+		509C486B18C4185100DC3414 /* Signal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Signal.m; sourceTree = "<group>"; };
 		50E089511825721B00DB2912 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = ../Event.h; sourceTree = "<group>"; };
 		50E089521825721B00DB2912 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Event.m; path = ../Event.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,6 +152,8 @@
 				50E089511825721B00DB2912 /* Event.h */,
 				50E089521825721B00DB2912 /* Event.m */,
 				5008512117033B5A00CE81E6 /* Multi_Signal_Generator.xcdatamodeld */,
+				509C486A18C4185100DC3414 /* Signal.h */,
+				509C486B18C4185100DC3414 /* Signal.m */,
 			);
 			name = "Data model";
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 				5008512317033B5A00CE81E6 /* Multi_Signal_Generator.xcdatamodeld in Sources */,
 				5008512617033B5A00CE81E6 /* MasterViewController.m in Sources */,
 				5008512917033B5A00CE81E6 /* DetailViewController.m in Sources */,
+				509C486C18C4185100DC3414 /* Signal.m in Sources */,
 				509ADA9918819CC200A1BCFF /* EventAudioPlayer.m in Sources */,
 				50E089531825721B00DB2912 /* Event.m in Sources */,
 			);

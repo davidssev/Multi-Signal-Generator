@@ -12,6 +12,8 @@
 
 @protocol SignalCellDelegate;
 
+#define MP3HEADER   44
+
 @interface SignalCell : UITableViewCell <UITextFieldDelegate> {
     
     IBOutlet UISlider *volumeSlider;
@@ -20,6 +22,10 @@
     IBOutlet UITextField *freqBox;
     Event *cellSignal;
     AVAudioPlayer *audioPlayer;
+    NSArray * dataArray;
+    NSData * buffer;
+    //float mp3Array[MP3HEADER];
+    float * audioBuffer;
     
     NSNumber *signalNumber;
     
@@ -31,6 +37,7 @@
 @property (nonatomic, retain) NSNumber *signalNumber;
 @property (nonatomic, retain) IBOutlet UITextField *freqBox;
 @property (nonatomic, retain) Event *cellSignal;
+@property (nonatomic, retain) NSData * buffer;
 @property (weak, nonatomic) id <SignalCellDelegate> delegate;
 
 -(void)initCell;
@@ -39,8 +46,9 @@
 -(IBAction)freqSliderChanged:(id)sender;
 -(IBAction)freqBoxChanged:(id)sender;
 -(IBAction)freqTypeChanged:(id)sender;
--(void)playAudioPlayer:(NSData*)buffer;
+-(void)playAudioPlayer;
 -(void)stopAudioPlayer;
+-(IBAction)freqSliderStopped:(id)sender;
 
 @end
 

@@ -17,7 +17,7 @@
 @end
 
 @implementation MasterViewController
-@synthesize upAd, audioPlayer;
+@synthesize upAd, audioPlayer, cellArray;
 
 #pragma mark - View Methods
 - (void)awakeFromNib
@@ -43,6 +43,8 @@
     
     upAd = [[ADInterstitialAd alloc] init];
     upAd.delegate = self;
+    
+    cellArray = [[NSMutableArray alloc] init];
     
 }
 
@@ -141,7 +143,9 @@
     
     SignalCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     cell.cellSignal = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    cell.delegate = self;
     [cell initCell];
+    //[cellArray insertObject:cell atIndex:indexPath.row];
     
     return cell;
 }
@@ -176,10 +180,13 @@
 /*
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
         self.detailViewController.detailItem = object;
     }
+     
+    
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -301,131 +308,7 @@
     
     UISlider *senderSlider = (UISlider*)sender;
     NSLog(@"test slider with tag: %i and value: %@",[sender tag], [NSNumber numberWithFloat:[senderSlider value]]);
-    
-    
-}
-/*
--(void)signalCell:(SignalCell *)controller VolumeSliderChanged:(UISlider *)volSlider    {
-    
-    //controller.cellSignal.volume = volSlider;
-    
-}
-*/
-
-#pragma mark - WAV Buffer Methods
--(void)fillBuffer:(float*)buffer fromEvent:(Event*)event   {
-    
-    float lowFreq = 20000;
-    
-    //for (int i = 0; i < [self.fetchedResultsController.fetchedObjects count]; i++) {
-        //Event *event = [self.fetchedResultsController.fetchedObjects objectAtIndex:index];
-        if ([[event frequency] floatValue] < lowFreq) {
-            lowFreq = [[event frequency] floatValue];
-        }
-    //}
-    
-    int bufferSize = ceilf(44100*lowFreq/343.2);
-    
-    //float buffer[44100];
-    
-    //for (int k = 0; k < 44100; k++) {
-    //    buffer1[k] = 0;
-   // }
-    
-    //float objectCount = [self.fetchedResultsController.fetchedObjects count];
-    //for (int i = 0; i < objectCount; i++) {
-        //Event *event = [self.fetchedResultsController.fetchedObjects objectAtIndex:index];
-        float frequency = [event.frequency floatValue];
-        float volume = [event.volume floatValue];
-        switch ([event.signalType intValue]) {
-            case 0:
-                for (int j = 0; j < bufferSize; j++) {
-                    buffer[j] += sinf(M_PI*2*frequency*j/44100.0)*volume;
-                }
-                break;
-                
-            default:
-                break;
-        }
-   // }
-  /*
-    for (int i = 0; i<44100; i++) {
-        buffer1[i] = sinf(M_PI*2*1000*i/44100)*0.5;
-    }
-    */
-    
-    //return buffer;
-    
-}
-
--(NSData *)dataWithBuffer:(float *)buffer   {
-    
-    unsigned int payloadSize = 44100 * sizeof(SInt16);  // byte size of waveform data
-    unsigned int wavSize = 44 + payloadSize;             // total byte size
-    
-    // Allocate a memory buffer that will hold the WAV header and the
-    // waveform bytes.
-    SInt8 *wavBuffer = (SInt8 *)malloc(wavSize);
-    if (wavBuffer == NULL)
-    {
-        NSLog(@"Error allocating %u bytes", wavSize);
-        //return nil;
-    }
-    
-    // Fake a WAV header.
-    SInt8 *header = (SInt8 *)wavBuffer;
-    header[0x00] = 'R';
-    header[0x01] = 'I';
-    header[0x02] = 'F';
-    header[0x03] = 'F';
-    header[0x08] = 'W';
-    header[0x09] = 'A';
-    header[0x0A] = 'V';
-    header[0x0B] = 'E';
-    header[0x0C] = 'f';
-    header[0x0D] = 'm';
-    header[0x0E] = 't';
-    header[0x0F] = ' ';
-    header[0x10] = 16;    // size of format chunk (always 16)
-    header[0x11] = 0;
-    header[0x12] = 0;
-    header[0x13] = 0;
-    header[0x14] = 1;     // 1 = PCM format
-    header[0x15] = 0;
-    header[0x16] = 1;     // number of channels
-    header[0x17] = 0;
-    header[0x18] = 0x44;  // samples per sec (44100)
-    header[0x19] = 0xAC;
-    header[0x1A] = 0;
-    header[0x1B] = 0;
-    header[0x1C] = 0x88;  // bytes per sec (88200)
-    header[0x1D] = 0x58;
-    header[0x1E] = 0x01;
-    header[0x1F] = 0;
-    header[0x20] = 2;     // block align (bytes per sample)
-    header[0x21] = 0;
-    header[0x22] = 16;    // bits per sample
-    header[0x23] = 0;
-    header[0x24] = 'd';
-    header[0x25] = 'a';
-    header[0x26] = 't';
-    header[0x27] = 'a';
-    
-    *((SInt32 *)(wavBuffer + 0x04)) = payloadSize + 36;   // total chunk size
-    *((SInt32 *)(wavBuffer + 0x28)) = payloadSize;        // size of waveform data
-    
-    // Convert the floating point audio data into signed 16-bit.
-    SInt16 *payload = (SInt16 *)(wavBuffer + 44);
-    for (int t = 0; t < 44100; ++t)
-    {
-        payload[t] = buffer[t] * 0x7fff;
-    }
-    
-    // Put everything in an NSData object.
-    NSData *data = [[NSData alloc] initWithBytesNoCopy:wavBuffer length:wavSize];
-    
-    return data;
-    
+        
 }
 
 #pragma mark - Play Methods
@@ -434,21 +317,13 @@
     UIBarButtonItem *stopButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPause target:self action:@selector(stopSignals)];
     self.navigationItem.leftBarButtonItem = stopButton;
     
-    NSError *error;
-    /*
-    [self fillBuffer];
-    audioPlayer = [[AVAudioPlayer alloc] initWithData:[self dataWithBuffer:buffer1] error:&error];
-    [audioPlayer setNumberOfLoops:-1];
-    [audioPlayer play];
-    */
-    
-    int objectCount = [self.fetchedResultsController.fetchedObjects count];
-    for (int i = 0; i < objectCount; i++) {
-        Event *event = [self.fetchedResultsController.fetchedObjects objectAtIndex:i];
-        int bufferSize = ceilf(44100*[[event frequency] floatValue]/343.2);
-        float buffer[bufferSize];
-        NSError *error;
-        AVAudioPlayer *anAudioPlayer = [[AVAudioPlayer alloc] initWithData:[self dataWithBuffer:[self fillBuffer:buffer fromEvent:event]] error:&error];
+    for (int i = 0; i < [self.fetchedResultsController.fetchedObjects count]; i++) {
+        NSIndexPath * index = [NSIndexPath indexPathForRow:i inSection:0];
+        //SignalCell *cell = (SignalCell *)[self.tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:index];
+        SignalCell *cell = (SignalCell *)[self.tableView cellForRowAtIndexPath:index];
+        NSLog(@"cell freq is %@",cell.cellSignal.frequency);
+        //SignalCell *cell = (SignalCell *)[cellArray objectAtIndex:i];
+        [cell playAudioPlayer];
     }
     
 }
@@ -458,7 +333,13 @@
     UIBarButtonItem *startButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemPlay target:self action:@selector(playSignals)];
     self.navigationItem.leftBarButtonItem = startButton;
     
-    [audioPlayer stop];
+    for (int i = 0; i < [self.fetchedResultsController.fetchedObjects count]; i++) {
+        NSIndexPath * index = [NSIndexPath indexPathForRow:i inSection:0];
+        //SignalCell *cell = (SignalCell *)[self.tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:index];
+        SignalCell *cell = (SignalCell *)[self.tableView cellForRowAtIndexPath:index];
+        //SignalCell *cell = (SignalCell *)[cellArray objectAtIndex:i];
+        [cell stopAudioPlayer];
+    }
     
 }
 
